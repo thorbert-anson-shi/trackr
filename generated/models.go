@@ -18,6 +18,7 @@ type Location struct {
 }
 
 type User struct {
-	ID   int32
-	Name pgtype.Text
+	ID                int32
+	Name              pgtype.Text
+	RegistrationToken pgtype.Text
 }

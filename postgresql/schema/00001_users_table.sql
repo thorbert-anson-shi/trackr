@@ -1,7 +1,8 @@
 -- +goose Up
 CREATE TABLE users (
 	id serial PRIMARY KEY,
-	name varchar(50)
+	name varchar(50),
+	registration_token varchar
 );
 
 -- +goose Down
