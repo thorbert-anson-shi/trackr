@@ -1,2 +1,3 @@
 *.env
 trackr-*.json
+trackr.log

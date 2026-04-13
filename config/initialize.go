@@ -1,17 +1,17 @@
 package config
 
 import (
+	"log"
 	"os"
 	"strings"
 
 	"github.com/joho/godotenv"
-	"tobtoby/trackr/logging"
 )
 
 func InitializeEnv() {
 	err := godotenv.Load(".env")
 	if err != nil {
-		logging.GlobalLogger.Fatalf("Failed to read .env file: %s", err.Error())
+		log.Default().Fatalf("Failed to read .env file: %s\n", err.Error())
 	}
 
 	for _, key_val := range os.Environ() {
@@ -19,5 +19,5 @@ func InitializeEnv() {
 		Config[key_val_arr[0]] = key_val_arr[1]
 	}
 
-	logging.GlobalLogger.Println("Successfully loaded .env file")
+	log.Default().Println("Successfully loaded .env file")
 }
