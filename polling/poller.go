@@ -2,7 +2,9 @@ package polling
 
 import (
 	"context"
+	"strconv"
 	"time"
+	"tobtoby/trackr/config"
 	"tobtoby/trackr/database"
 	"tobtoby/trackr/firebase"
 	"tobtoby/trackr/generated"
@@ -13,9 +15,23 @@ import (
 )
 
 func InitializePoller(appCtx context.Context) {
-	queries := generated.New(database.DB)
 
-	ticker := time.NewTicker(5 * time.Second)
+	isDevEnvironment := config.SafeFetchVar("DEVELOPMENT") == "true"
+	devTickInterval, err := strconv.Atoi(config.SafeFetchVar("TICK_INTERVAL_DEV"))
+	if err != nil {
+		logging.GlobalLogger.Fatalln("TICK_INTERVAL_DEV needs to be an int")
+	}
+	prodTickInterval, err := strconv.Atoi(config.SafeFetchVar("TICK_INTERVAL_PROD"))
+	if err != nil {
+		logging.GlobalLogger.Fatalln("TICK_INTERVAL_PROD needs to be an int")
+	}
+
+	var ticker *time.Ticker
+	if isDevEnvironment {
+		ticker = time.NewTicker(time.Duration(devTickInterval) * time.Second)
+	} else {
+		ticker = time.NewTicker(time.Duration(prodTickInterval) * time.Second)
+	}
 
 	go func() {
 		defer ticker.Stop()
@@ -26,16 +42,16 @@ func InitializePoller(appCtx context.Context) {
 				// Catch if application is cancelled mid-poll
 				select {
 				case <-appCtx.Done():
-					logging.GlobalLogger.Println("Poller stopped by application")
+					logging.PollingLogger.Println("Poller stopped by application")
 					return
 				default:
 				}
-				logging.GlobalLogger.Println("Polling FCM")
+				logging.PollingLogger.Println("Polling FCM")
 				jobCtx, cancel := context.WithTimeout(appCtx, 5*time.Second)
-				requestLocationUpdates(jobCtx, queries)
+				requestLocationUpdates(jobCtx, generated.New(database.DB))
 				cancel()
 			case <-appCtx.Done():
-				logging.GlobalLogger.Println("Poller stopped by application")
+				logging.PollingLogger.Println("Poller stopped by application")
 				return
 			}
 		}
@@ -45,20 +61,20 @@ func InitializePoller(appCtx context.Context) {
 func requestLocationUpdates(c context.Context, queries *generated.Queries) error {
 	registrationTokens, err := queries.ListRegistrationTokens(c)
 	if err != nil {
-		logging.GlobalLogger.Println("An error occurred when fetching registration tokens")
+		logging.PollingLogger.Println("An error occurred when fetching registration tokens")
 		return err
 	}
 
 	nativeRegistrationTokens := registrationTokenPGToNative(registrationTokens)
 
-	logging.GlobalLogger.Printf("Registration tokens: %s\n", nativeRegistrationTokens)
+	logging.PollingLogger.Printf("Registration tokens: %s\n", nativeRegistrationTokens)
 
 	batchResponse, err := firebase.MsgClient.SendMulticast(c, &messaging.MulticastMessage{
 		Tokens: nativeRegistrationTokens,
 		Data:   map[string]string{"event": "sendLocation"},
 	})
 	if err != nil {
-		logging.GlobalLogger.Printf("Failed to send all messages: %s\n", err.Error())
+		logging.PollingLogger.Printf("Failed to send all messages: %s\n", err.Error())
 		return err
 	}
 
@@ -70,7 +86,7 @@ func requestLocationUpdates(c context.Context, queries *generated.Queries) error
 			}
 		}
 
-		logging.GlobalLogger.Printf("Tokens causing failure: %v\n", failedTokens)
+		logging.PollingLogger.Printf("Tokens causing failure: %v\n", failedTokens)
 	}
 
 	return nil

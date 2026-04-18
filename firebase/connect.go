@@ -15,7 +15,7 @@ func ConnectFirebase() {
 	logging.GlobalLogger.Println("Reading service account configuration")
 
 	var err error
-	opt := option.WithAuthCredentialsFile(option.ServiceAccount, config.Config["SERVICE_ACCOUNT_PATH"])
+	opt := option.WithAuthCredentialsFile(option.ServiceAccount, config.SafeFetchVar("SERVICE_ACCOUNT_PATH"))
 
 	app, err := fb.NewApp(context.Background(), nil, opt)
 	if err != nil {

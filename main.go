@@ -5,6 +5,8 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"tobtoby/trackr/admin"
+	"tobtoby/trackr/auth"
 	"tobtoby/trackr/config"
 	"tobtoby/trackr/database"
 	"tobtoby/trackr/firebase"
@@ -15,6 +17,8 @@ import (
 
 	goValidator "github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v3/middleware/helmet"
+	"github.com/gofiber/fiber/v3/middleware/keyauth"
 	"github.com/gofiber/fiber/v3/middleware/logger"
 )
 
@@ -28,16 +32,24 @@ func main() {
 	firebase.ConnectFirebase()
 	polling.InitializePoller(signalCtx)
 
+	admin.BootstrapAdmin(signalCtx)
+
 	app := fiber.New(fiber.Config{
 		StructValidator: &validation.StructValidator{Validator: goValidator.New()},
 	})
 
 	app.Use(logger.New())
+	app.Use(helmet.New())
+	app.Use(keyauth.New(auth.KeyAuthConfig))
 
 	api := app.Group("/api")
+
 	v1 := api.Group("/v1")
 	v1.Get("/locations", handlers.ListLocationsHandler)
 	v1.Post("/locations", handlers.PostLocationHandler)
+	v1.Post("/users", handlers.CreateUser)
+
+	app.Get("/health", func(c fiber.Ctx) error { return c.SendStatus(200) })
 
 	go func() {
 		if err := app.Listen(":8000"); err != nil {

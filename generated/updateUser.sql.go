@@ -15,7 +15,7 @@ const updateUser = `-- name: UpdateUser :one
 UPDATE users 
 SET registration_token = $2 
 WHERE id = $1 
-RETURNING id, name, registration_token
+RETURNING id, name, registration_token, api_key, is_admin
 `
 
 type UpdateUserParams struct {
@@ -26,6 +26,12 @@ type UpdateUserParams struct {
 func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (User, error) {
 	row := q.db.QueryRow(ctx, updateUser, arg.ID, arg.RegistrationToken)
 	var i User
-	err := row.Scan(&i.ID, &i.Name, &i.RegistrationToken)
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.RegistrationToken,
+		&i.ApiKey,
+		&i.IsAdmin,
+	)
 	return i, err
 }

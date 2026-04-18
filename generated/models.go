@@ -21,4 +21,6 @@ type User struct {
 	ID                int32
 	Name              pgtype.Text
 	RegistrationToken pgtype.Text
+	ApiKey            pgtype.Text
+	IsAdmin           pgtype.Bool
 }

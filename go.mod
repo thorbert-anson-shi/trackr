@@ -8,6 +8,7 @@ require (
 	github.com/gofiber/fiber/v3 v3.1.0
 	github.com/jackc/pgx/v5 v5.6.0
 	github.com/joho/godotenv v1.5.1
+	github.com/sethvargo/go-diceware v0.5.0
 	google.golang.org/api v0.275.0
 )
 

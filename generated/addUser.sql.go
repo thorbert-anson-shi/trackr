@@ -12,18 +12,31 @@ import (
 )
 
 const addUser = `-- name: AddUser :one
-INSERT INTO users (name, registration_token) 
-VALUES ($1, $2) RETURNING id, name, registration_token
+INSERT INTO users (name, registration_token, api_key, is_admin) 
+VALUES ($1, $2, $3, $4) RETURNING id, name, registration_token, api_key, is_admin
 `
 
 type AddUserParams struct {
 	Name              pgtype.Text
 	RegistrationToken pgtype.Text
+	ApiKey            pgtype.Text
+	IsAdmin           pgtype.Bool
 }
 
 func (q *Queries) AddUser(ctx context.Context, arg AddUserParams) (User, error) {
-	row := q.db.QueryRow(ctx, addUser, arg.Name, arg.RegistrationToken)
+	row := q.db.QueryRow(ctx, addUser,
+		arg.Name,
+		arg.RegistrationToken,
+		arg.ApiKey,
+		arg.IsAdmin,
+	)
 	var i User
-	err := row.Scan(&i.ID, &i.Name, &i.RegistrationToken)
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.RegistrationToken,
+		&i.ApiKey,
+		&i.IsAdmin,
+	)
 	return i, err
 }
