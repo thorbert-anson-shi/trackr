@@ -51,5 +51,6 @@ func initializePollLogger() {
 
 	PollingLogger = log.New(pollLogWriter, "", log.LstdFlags)
 
+	GlobalLogger.Println("Successfully initialized poll logger")
 	PollingLogger.Println("Successfully initialized poll logger")
 }
