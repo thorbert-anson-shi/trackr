@@ -47,7 +47,6 @@ func InitializePoller(appCtx context.Context) {
 					return
 				default:
 				}
-				logging.PollingLogger.Println("Polling FCM")
 				jobCtx, cancel := context.WithTimeout(appCtx, 5*time.Second)
 				if err = requestLocationUpdates(jobCtx, generated.New(database.DB)); err != nil {
 					logging.PollingLogger.Printf("An error occurred when requesting locations: %s\n", err.Error())
