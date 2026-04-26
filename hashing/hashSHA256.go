@@ -1,3 +1,4 @@
+// Package hashing hashes strings into other strings
 package hashing
 
 import (

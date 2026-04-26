@@ -1,3 +1,4 @@
+// Package validation defines a generic validator for request bodies
 package validation
 
 import "github.com/go-playground/validator/v10"

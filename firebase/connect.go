@@ -3,6 +3,7 @@ package firebase
 import (
 	"context"
 	"fmt"
+
 	"tobtoby/trackr/config"
 	"tobtoby/trackr/logging"
 
@@ -19,7 +20,7 @@ func ConnectFirebase() {
 
 	app, err := fb.NewApp(context.Background(), nil, opt)
 	if err != nil {
-		logging.GlobalLogger.Fatalln(fmt.Errorf("Error initializing app: %v", err))
+		logging.GlobalLogger.Fatalln(fmt.Errorf("error initializing app: %v", err))
 	}
 
 	MsgClient, err = app.Messaging(context.Background())

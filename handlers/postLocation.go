@@ -2,13 +2,13 @@ package handlers
 
 import (
 	"time"
+
+	"tobtoby/trackr/auth"
 	"tobtoby/trackr/database"
 	"tobtoby/trackr/generated"
-	"tobtoby/trackr/hashing"
 	"tobtoby/trackr/logging"
 
 	"github.com/gofiber/fiber/v3"
-	"github.com/gofiber/fiber/v3/extractors"
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
@@ -27,19 +27,8 @@ func PostLocationHandler(c fiber.Ctx) error {
 		return c.SendStatus(422)
 	}
 
-	apiKey, err := extractors.FromAuthHeader("Bearer").Extract(c)
-	if err != nil {
-		logging.GlobalLogger.Println("Cannot extract token from auth header")
-		return c.SendStatus(401)
-	}
-
-	hashedApiKey := hashing.HashSHA256(apiKey)
-
-	user, err := queries.GetUserByApiKey(c, pgtype.Text{String: hashedApiKey, Valid: true})
-	if err != nil {
-		logging.GlobalLogger.Println("API key doesn't exist. This may be an attack")
-		return c.SendStatus(404)
-	}
+	// Fetch user extracted by API key validator
+	user := c.Locals(auth.UserContextKey).(generated.User)
 
 	location, err := queries.AddLocation(c, generated.AddLocationParams{
 		UserID:    pgtype.Int4{Int32: user.ID, Valid: true},

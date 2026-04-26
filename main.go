@@ -48,6 +48,8 @@ func main() {
 	v1.Get("/locations", handlers.ListLocationsHandler)
 	v1.Post("/locations", handlers.PostLocationHandler)
 	v1.Post("/users", handlers.CreateUser)
+	v1.Post("/auth/login", handlers.Login)
+	v1.Post("/auth/logout", handlers.Logout)
 
 	app.Get("/health", func(c fiber.Ctx) error { return c.SendStatus(200) })
 

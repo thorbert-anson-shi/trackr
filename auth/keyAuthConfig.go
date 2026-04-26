@@ -26,7 +26,7 @@ var KeyAuthConfig keyauth.Config = keyauth.Config{
 	},
 	SuccessHandler: nil,
 	ErrorHandler:   nil,
-	Validator:      ApiKeyValidator,
+	Validator:      APIKeyValidator,
 	Realm:          "Restricted",
 	Extractor:      extractors.FromAuthHeader("Bearer"),
 }

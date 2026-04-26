@@ -1,9 +1,11 @@
+// Package polling contains logic for polling devices at certain intervals
 package polling
 
 import (
 	"context"
 	"strconv"
 	"time"
+
 	"tobtoby/trackr/config"
 	"tobtoby/trackr/database"
 	"tobtoby/trackr/firebase"
@@ -15,7 +17,6 @@ import (
 )
 
 func InitializePoller(appCtx context.Context) {
-
 	isDevEnvironment := config.SafeFetchVar("DEVELOPMENT") == "true"
 	devTickInterval, err := strconv.Atoi(config.SafeFetchVar("TICK_INTERVAL_DEV"))
 	if err != nil {
@@ -48,7 +49,9 @@ func InitializePoller(appCtx context.Context) {
 				}
 				logging.PollingLogger.Println("Polling FCM")
 				jobCtx, cancel := context.WithTimeout(appCtx, 5*time.Second)
-				requestLocationUpdates(jobCtx, generated.New(database.DB))
+				if err = requestLocationUpdates(jobCtx, generated.New(database.DB)); err != nil {
+					logging.PollingLogger.Printf("An error occurred when requesting locations: %s\n", err.Error())
+				}
 				cancel()
 			case <-appCtx.Done():
 				logging.PollingLogger.Println("Poller stopped by application")
