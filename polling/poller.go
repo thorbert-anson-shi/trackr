@@ -68,12 +68,14 @@ func requestLocationUpdates(c context.Context, queries *generated.Queries) error
 		return err
 	}
 
-	// Don't poll if there are no registration tokens
-	if len(registrationTokens) == 0 {
+	nativeRegistrationTokens := registrationTokenPGToNative(registrationTokens)
+
+	// If no valid registration tokens found, don't poll
+	// NOTE: This check is done after parsing because admin returns a NULL registration token,
+	// causing the len(registrationTokens) == 0 check to fail
+	if len(nativeRegistrationTokens) == 0 {
 		return nil
 	}
-
-	nativeRegistrationTokens := registrationTokenPGToNative(registrationTokens)
 
 	logging.PollingLogger.Printf("Registration tokens: %s\n", nativeRegistrationTokens)
 
