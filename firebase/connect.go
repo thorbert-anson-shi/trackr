@@ -25,7 +25,7 @@ func ConnectFirebase() {
 
 	MsgClient, err = app.Messaging(context.Background())
 	if err != nil {
-		logging.GlobalLogger.Fatalln("Failed to connect to Firebase")
+		logging.GlobalLogger.Fatalf("Failed to connect to Firebase: %s\n", err.Error())
 	}
 
 	logging.GlobalLogger.Println("Connection to Firebase established")

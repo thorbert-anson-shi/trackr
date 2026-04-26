@@ -4,6 +4,7 @@
 
 # admin sdk key
 trackr-*.json
+service-account-config.json
 
 # log files
 *.log

@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"strconv"
+
 	"tobtoby/trackr/config"
 	"tobtoby/trackr/logging"
 
@@ -33,7 +34,7 @@ func ConnectDB() {
 
 	DB, err = pgx.Connect(context.Background(), dsn)
 	if err != nil {
-		logging.GlobalLogger.Fatalln("Failed to connect to database")
+		logging.GlobalLogger.Fatalf("Failed to connect to database: %s\n", err.Error())
 	}
 
 	logging.GlobalLogger.Println("Connection Opened to database")

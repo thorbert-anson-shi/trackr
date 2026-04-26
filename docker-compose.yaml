@@ -1,0 +1,44 @@
+name: trackr
+
+services:
+  server:
+    image: trackr
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./trackr.log:/app/trackr.log
+      - ./polls.log:/app/polls.log
+    depends_on:
+      - migrate
+
+  migrate:
+    image: trackr
+    command: ["/app/goose", "-env", ".env", "up"]
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: postgres:18-trixie@sha256:78481659c47e862334611ccdaf7c369c986b3046da9857112f3b309114a65fb4
+    ports:
+      - "5432:5432"
+    secrets:
+      - postgres_password
+    environment:
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+      POSTGRES_USER: trackr_admin
+      POSTGRES_DB: trackr
+    volumes:
+      - db_data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U trackr_admin -d trackr"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+secrets:
+  postgres_password:
+    file: .postgres-password
+
+volumes:
+  db_data:

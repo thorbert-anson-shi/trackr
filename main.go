@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+
 	"tobtoby/trackr/admin"
 	"tobtoby/trackr/auth"
 	"tobtoby/trackr/config"
@@ -38,7 +39,9 @@ func main() {
 		StructValidator: &validation.StructValidator{Validator: goValidator.New()},
 	})
 
-	app.Use(logger.New())
+	app.Use(logger.New(logger.Config{
+		Stream: logging.GlobalLogger.Writer(),
+	}))
 	app.Use(helmet.New())
 	app.Use(keyauth.New(auth.KeyAuthConfig))
 

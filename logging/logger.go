@@ -24,12 +24,12 @@ func initializeApplicationLogger() {
 
 	appLogWriter, err := os.OpenFile(applicationLogFile, os.O_RDWR, 0o666)
 	if err != nil {
-		GlobalLogger.Fatalf("Failed to open file: %s\n", err.Error())
+		log.Default().Fatalf("Failed to open file: %s\n", err.Error())
 	}
 
 	// Clear log file if previously had contents
 	if err = appLogWriter.Truncate(0); err != nil {
-		GlobalLogger.Fatalf("Failed to truncate existing file: %s\n", err.Error())
+		log.Default().Fatalf("Failed to truncate existing file: %s\n", err.Error())
 	}
 
 	GlobalLogger = log.New(io.MultiWriter(appLogWriter, os.Stdout), "", log.LstdFlags)
@@ -42,11 +42,11 @@ func initializePollLogger() {
 
 	pollLogWriter, err := os.OpenFile(pollingLogFile, os.O_RDWR, 0o666)
 	if err != nil {
-		PollingLogger.Fatalf("Failed to open file: %s\n", err.Error())
+		log.Default().Fatalf("Failed to open file: %s\n", err.Error())
 	}
 
 	if err = pollLogWriter.Truncate(0); err != nil {
-		PollingLogger.Fatalf("Failed to truncate existing file: %s\n", err.Error())
+		log.Default().Fatalf("Failed to truncate existing file: %s\n", err.Error())
 	}
 
 	PollingLogger = log.New(pollLogWriter, "", log.LstdFlags)
