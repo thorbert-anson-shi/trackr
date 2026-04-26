@@ -2,18 +2,13 @@ name: trackr
 
 services:
   server:
-    image: trackr
+    image: code.tobtoby.net/trackr:latest
     ports:
       - "8000:8000"
     volumes:
+      # Make sure to adjust to your own log file locations
       - ./trackr.log:/app/trackr.log
       - ./polls.log:/app/polls.log
-    depends_on:
-      - migrate
-
-  migrate:
-    image: trackr
-    command: ["/app/goose", "-env", ".env", "up"]
     depends_on:
       db:
         condition: service_healthy
@@ -37,8 +32,9 @@ services:
       retries: 5
 
 secrets:
+  # Adjust this based on your configuration
   postgres_password:
-    file: .postgres-password
+    file: postgres.pass
 
 volumes:
   db_data:

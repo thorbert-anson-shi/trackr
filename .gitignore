@@ -8,3 +8,6 @@ service-account-config.json
 
 # log files
 *.log
+
+# passwords
+*.pass

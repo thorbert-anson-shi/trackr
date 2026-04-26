@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"embed"
 	"os"
 	"os/signal"
 	"syscall"
@@ -23,6 +24,9 @@ import (
 	"github.com/gofiber/fiber/v3/middleware/logger"
 )
 
+//go:embed postgresql/schema/*.sql
+var migrationDir embed.FS
+
 func main() {
 	signalCtx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
@@ -30,6 +34,7 @@ func main() {
 	config.InitializeEnv()
 	logging.InitializeLogger()
 	database.ConnectDB()
+	database.MigrateDB(&migrationDir)
 	firebase.ConnectFirebase()
 	polling.InitializePoller(signalCtx)
 
