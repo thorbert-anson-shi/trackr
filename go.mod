@@ -7,7 +7,6 @@ require (
 	github.com/go-playground/validator/v10 v10.30.2
 	github.com/gofiber/fiber/v3 v3.1.0
 	github.com/jackc/pgx/v5 v5.9.2
-	github.com/joho/godotenv v1.5.1
 	github.com/pressly/goose/v3 v3.27.1
 	github.com/sethvargo/go-diceware v0.5.0
 	google.golang.org/api v0.275.0

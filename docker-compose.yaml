@@ -5,10 +5,12 @@ services:
     image: code.tobtoby.net/tobtoby/trackr:latest
     ports:
       - "8000:8000"
+    env_file: .env
     volumes:
       # Make sure to adjust to your own log file locations
       - ./trackr.log:/app/trackr.log
       - ./polls.log:/app/polls.log
+      - ./service-account-config.json:/app/service-account-config.json
     depends_on:
       db:
         condition: service_healthy

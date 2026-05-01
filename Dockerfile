@@ -13,7 +13,6 @@ FROM dhi.io/alpine-base:3.23@sha256:1def3ff29647c43c52f041c378110d513c57c9a5346b
 
 WORKDIR /app
 
-COPY .env service-account-config.json ./
 COPY postgresql/ ./postgresql/
 COPY --from=builder /app/trackr ./
 
