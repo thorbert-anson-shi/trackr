@@ -1,13 +1,12 @@
-.env*
-# do not ignore example env
-!.env.example
-
 # admin sdk key
 trackr-*.json
-service-account-config.json
 
 # log files
 *.log
 
-# passwords
-*.pass
+# secrets
+postgres.pass
+service-account-config.json
+admin-api-key.txt
+db-conn-string.txt
+

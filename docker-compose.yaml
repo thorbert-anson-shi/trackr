@@ -5,12 +5,32 @@ services:
     image: code.tobtoby.net/tobtoby/trackr:latest
     ports:
       - "8000:8000"
-    env_file: .env
     volumes:
       # Make sure to adjust to your own log file locations
       - ./trackr.log:/app/trackr.log
       - ./polls.log:/app/polls.log
-      - ./service-account-config.json:/app/service-account-config.json
+    environment:
+      LOG_FILE: /app/trackr.log
+      POLL_LOGS: /app/polls.log
+      ADMIN_NAME: trackr_admin
+      ADMIN_API_KEY_FILE: /run/secrets/admin_api_key
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USER: trackr_admin
+      DB_PASSWORD_FILE: /run/secrets/postgres_password
+      DB_NAME: trackr
+      GOOSE_DRIVER: postgres
+      GOOSE_DBSTRING_FILE: /run/secrets/db_conn_string
+      GOOSE_MIGRATION_DIR: ./postgresql/schema/
+      SERVICE_ACCOUNT_PATH: /run/secrets/service_account_config
+      TICK_INTERVAL_DEV: 5
+      TICK_INTERVAL_PROD: 300
+      DEVELOPMENT: true
+    secrets:
+      - admin_api_key
+      - postgres_password
+      - db_conn_string
+      - service_account_config
     depends_on:
       db:
         condition: service_healthy
@@ -18,7 +38,7 @@ services:
   db:
     image: postgres:18-trixie@sha256:78481659c47e862334611ccdaf7c369c986b3046da9857112f3b309114a65fb4
     ports:
-      - "5432:5432"
+      - "5431:5432"
     secrets:
       - postgres_password
     environment:
@@ -36,7 +56,13 @@ services:
 secrets:
   # Adjust this based on your configuration
   postgres_password:
-    file: postgres.pass
+    file: ./postgres.pass
+  admin_api_key:
+    file: ./admin-api-key.txt
+  db_conn_string:
+    file: ./db-conn-string.txt
+  service_account_config:
+    file: ./service-account-config.json
 
 volumes:
   db_data:

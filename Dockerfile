@@ -3,10 +3,13 @@ FROM dhi.io/golang:1@sha256:a473fd3819e71b8ec2d81b38014892c937c66b06d94f5a5d49ad
 WORKDIR /app
 
 COPY go.mod go.sum ./
-RUN go mod download
+RUN --mount=type=cache,target=/home/tobtoby/go/pkg/mod \ 
+  go mod download
 
 COPY . .
-RUN /usr/local/go/bin/go build -o trackr -ldflags="-s -w" tobtoby/trackr
+RUN --mount=type=cache,target=/home/tobtoby/go/pkg/mod \
+  --mount=type=cache,target=/home/tobtoby/.cache/go-build \
+  go build -o trackr -ldflags="-s -w" tobtoby/trackr
 
 
 FROM dhi.io/alpine-base:3.23@sha256:1def3ff29647c43c52f041c378110d513c57c9a5346bec75728205f7bd7e4fe8 AS runner

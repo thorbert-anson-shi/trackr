@@ -24,7 +24,7 @@ func ConnectDB() {
 	dsn := fmt.Sprintf(
 		"postgres://%s:%s@%s:%d/%s?sslmode=disable",
 		config.SafeFetchVar("DB_USER"),
-		config.SafeFetchVar("DB_PASSWORD"),
+		config.SafeFetchVarFromFile("DB_PASSWORD_FILE"),
 		config.SafeFetchVar("DB_HOST"),
 		port,
 		config.SafeFetchVar("DB_NAME"),

@@ -17,7 +17,7 @@ func BootstrapAdmin(c context.Context) {
 	queries := generated.New(database.DB)
 
 	adminName := config.SafeFetchVar("ADMIN_NAME")
-	adminAPIKey := config.SafeFetchVar("ADMIN_API_KEY")
+	adminAPIKey := config.SafeFetchVarFromFile("ADMIN_API_KEY_FILE")
 
 	hashedAPIKey := hashing.HashSHA256(adminAPIKey)
 

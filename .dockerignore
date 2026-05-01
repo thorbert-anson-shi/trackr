@@ -1,0 +1,9 @@
+.git
+.gitignore
+*.log
+*.md
+.env
+postgres.pass
+service-account-config.json
+docker-compose.yaml
+trackr
