@@ -8,6 +8,14 @@ import (
 	"github.com/gofiber/fiber/v3"
 )
 
+// Login logs the login event for the authenticated user.
+// @Summary      User login
+// @Description  Authenticates the user via API key and logs the login event.
+// @Tags         auth
+// @Produce      json
+// @Security     ApiKeyAuth
+// @Success      200
+// @Router       /api/v1/auth/login [post]
 func Login(c fiber.Ctx) error {
 	// It's funny but the apiKeyValidator already
 	// does the querying job here.

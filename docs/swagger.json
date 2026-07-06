@@ -1,0 +1,243 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "Location tracking API",
+        "title": "Trackr API",
+        "contact": {},
+        "version": "1.0"
+    },
+    "paths": {
+        "/api/v1/auth/login": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Authenticates the user via API key and logs the login event.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "User login",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/v1/auth/logout": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Logs the logout event for the authenticated user.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "User logout",
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    }
+                }
+            }
+        },
+        "/api/v1/locations": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Retrieves all location records from the database.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "locations"
+                ],
+                "summary": "List all locations",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/handlers.LocationResponse"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Records a new location for the authenticated user.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "locations"
+                ],
+                "summary": "Create a location",
+                "parameters": [
+                    {
+                        "description": "Location data",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handlers.PostLocationRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.LocationResponse"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity - invalid request body"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/api/v1/users": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Admin-only endpoint that creates a new user with a randomly generated API key.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "text/plain"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Create a new user",
+                "parameters": [
+                    {
+                        "description": "User details",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handlers.CreateUserRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Generated API key",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - user is not admin"
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity - invalid request body"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "handlers.CreateUserRequest": {
+            "type": "object",
+            "required": [
+                "name",
+                "registration_token"
+            ],
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "registration_token": {
+                    "type": "string"
+                }
+            }
+        },
+        "handlers.LocationResponse": {
+            "type": "object",
+            "properties": {
+                "accuracy": {
+                    "type": "number"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "latitude": {
+                    "type": "number"
+                },
+                "longitude": {
+                    "type": "number"
+                },
+                "timestamp": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "handlers.PostLocationRequest": {
+            "type": "object",
+            "required": [
+                "accuracy",
+                "latitude",
+                "longitude"
+            ],
+            "properties": {
+                "accuracy": {
+                    "type": "number"
+                },
+                "latitude": {
+                    "type": "number"
+                },
+                "longitude": {
+                    "type": "number"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "ApiKeyAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        }
+    }
+}

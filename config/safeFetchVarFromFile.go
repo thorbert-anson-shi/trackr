@@ -14,7 +14,7 @@ func SafeFetchVarFromFile(key string) string {
 
 	valueBytes, err := os.ReadFile(fileName)
 	if err != nil {
-		log.Default().Fatalf("Failed to read file defined in %s\n", key)
+		log.Default().Fatalf("Failed to read file defined in %s: %s\n", key, err.Error())
 	}
 
 	value := strings.TrimSpace(string(valueBytes))

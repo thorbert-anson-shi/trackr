@@ -1,0 +1,34 @@
+# https://kubernetes.io/docs/concepts/configuration/configmap/
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: trackr-be-config
+  namespace: default
+data:
+  ADMIN_API_KEY_FILE: /etc/trackr-be-secrets/admin-api-key
+  LOG_FILE: /app/trackr.log
+  POLL_LOGS: /app/polls.log
+  ADMIN_NAME: trackr_admin
+  DB_HOST: trackr-db-0.trackr-db.default.svc.cluster.local
+  DB_PORT: "5432"
+  DB_USER: trackr_admin
+  DB_NAME: trackr
+  DB_PASSWORD_FILE: /etc/trackr-be-secrets/db-password
+  GOOSE_DRIVER: postgres
+  GOOSE_MIGRATION_DIR: ./postgresql/schema/
+  GOOSE_DBSTRING_FILE: /etc/trackr-be-secrets/goose-dbstring
+  TICK_INTERVAL_DEV: "5"
+  TICK_INTERVAL_PROD: "300"
+  SERVICE_ACCOUNT_PATH: /etc/trackr-be-secrets/service-account-config
+  DEVELOPMENT: "true"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: trackr-db-config
+  namespace: default
+data:
+  POSTGRES_USER: trackr_admin
+  POSTGRES_DB: trackr
+  POSTGRES_PASSWORD_FILE: /etc/trackr-db-secrets/postgres-password
+---

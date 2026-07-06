@@ -1,0 +1,137 @@
+# https://kubernetes.io/docs/concepts/workloads/controllers/deployment/
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: trackr
+  namespace: default
+  labels:
+    app: trackr
+spec:
+  selector:
+    matchLabels:
+      app: trackr
+  replicas: 2
+  strategy:
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 50%
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+        kubectl.kubernetes.io/default-container: trackr
+      labels:
+        app: trackr
+    spec:
+      # initContainers:
+      # Init containers are exactly like regular containers, except:
+      # - Init containers always run to completion.
+      # - Each init container must complete successfully before the next one starts.
+      containers:
+        - name: trackr
+          image: tbcr.tobtoby.net/trackr:0.1.1
+          imagePullPolicy: IfNotPresent
+          resources:
+            requests:
+              cpu: 100m
+              memory: 100Mi
+            limits:
+              cpu: 100m
+              memory: 200Mi
+          # TODO: Add a proper liveness endpoint
+          # livenessProbe:
+          #   tcpSocket:
+          #     port: 8000
+          #   initialDelaySeconds: 5
+          #   timeoutSeconds: 5
+          #   successThreshold: 1
+          #   failureThreshold: 3
+          #   periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 5
+            timeoutSeconds: 2
+            successThreshold: 1
+            failureThreshold: 3
+            periodSeconds: 10
+          envFrom:
+            - configMapRef:
+                name: trackr-be-config
+          ports:
+            - containerPort: 8000
+              name: trackr
+          volumeMounts:
+            - name: app-secrets
+              mountPath: /etc/trackr-be-secrets
+            - name: app-logs
+              mountPath: /app/trackr.log
+            - name: poll-logs
+              mountPath: /app/polls.log
+
+      volumes:
+        - name: app-secrets
+          secret:
+            secretName: trackr-be-secrets
+        - name: app-logs
+          hostPath:
+            path: /home/tobtoby/playground/trackr/polls.log
+        - name: poll-logs
+          hostPath:
+            path: /home/tobtoby/playground/trackr/trackr.log
+
+      imagePullSecrets:
+        - name: tbcr-creds
+
+      restartPolicy: Always
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: trackr-db
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: trackr-db # has to match .spec.template.metadata.labels
+  serviceName: "trackr-db"
+  template:
+    metadata:
+      annotations:
+        kubectl.kubernetes.io/default-container: trackr-db
+      labels:
+        app: trackr-db # has to match .spec.selector.matchLabels
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+        - name: trackr-db
+          image: postgres:18-trixie@sha256:78481659c47e862334611ccdaf7c369c986b3046da9857112f3b309114a65fb4
+          envFrom:
+            - configMapRef:
+                name: trackr-db-config
+          ports:
+            - containerPort: 5432
+              name: pg
+          volumeMounts:
+            - name: db-secrets
+              mountPath: /etc/trackr-db-secrets
+            - name: postgres-pv-claim
+              mountPath: /var/lib/postgresql
+
+      volumes:
+        - name: db-secrets
+          secret:
+            secretName: trackr-db-secrets
+
+  volumeClaimTemplates:
+    - metadata:
+        name: postgres-pv-claim
+      spec:
+        storageClassName: local-path
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 500Mi
+---

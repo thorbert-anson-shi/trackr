@@ -19,9 +19,19 @@ type CreateUserRequest struct {
 	RegistrationToken string `json:"registration_token" validate:"required"`
 }
 
-// CreateUser is an admin-only endpoint that parses the request body,
-// generates a random API key, hashes it with SHA256, and stores the
-// new user via queries.AddUser().
+// CreateUser creates a new user with a generated API key.
+// @Summary      Create a new user
+// @Description  Admin-only endpoint that creates a new user with a randomly generated API key.
+// @Tags         users
+// @Accept       json
+// @Produce      plain
+// @Security     ApiKeyAuth
+// @Param        body  body  CreateUserRequest  true  "User details"
+// @Success      200   {string}  string  "Generated API key"
+// @Failure      403   "Forbidden - user is not admin"
+// @Failure      422   "Unprocessable Entity - invalid request body"
+// @Failure      500   "Internal Server Error"
+// @Router       /api/v1/users [post]
 func CreateUser(c fiber.Ctx) error {
 	queries := generated.New(database.DB)
 

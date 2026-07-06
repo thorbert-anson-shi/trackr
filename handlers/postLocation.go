@@ -18,6 +18,18 @@ type PostLocationRequest struct {
 	Accuracy  float32 `json:"accuracy" validate:"required"`
 }
 
+// PostLocationHandler creates a new location record.
+// @Summary      Create a location
+// @Description  Records a new location for the authenticated user.
+// @Tags         locations
+// @Accept       json
+// @Produce      json
+// @Security     ApiKeyAuth
+// @Param        body  body  PostLocationRequest  true  "Location data"
+// @Success      201   {object}  LocationResponse
+// @Failure      422   "Unprocessable Entity - invalid request body"
+// @Failure      500   "Internal Server Error"
+// @Router       /api/v1/locations [post]
 func PostLocationHandler(c fiber.Ctx) error {
 	queries := generated.New(database.DB)
 	locationBuf := new(PostLocationRequest)

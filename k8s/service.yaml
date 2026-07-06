@@ -1,0 +1,33 @@
+# https://kubernetes.io/docs/concepts/services-networking/service/
+apiVersion: v1
+kind: Service
+metadata:
+  name: trackr
+  namespace: default
+spec:
+  selector:
+    app: trackr
+  type: NodePort
+  ports:
+    - name: trackr
+      protocol: TCP
+      port: 80
+      targetPort: 8000
+      nodePort: 30001
+---
+# https://kubernetes.io/docs/concepts/services-networking/service/
+apiVersion: v1
+kind: Service
+metadata:
+  name: trackr-db
+  namespace: default
+spec:
+  selector:
+    app: trackr-db
+  type: ClusterIP
+  ports:
+    - name: trackr-db
+      protocol: TCP
+      port: 5432
+      targetPort: 5432
+---

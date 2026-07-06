@@ -9,4 +9,5 @@ postgres.pass
 service-account-config.json
 admin-api-key.txt
 db-conn-string.txt
+k8s/secrets.yaml
 

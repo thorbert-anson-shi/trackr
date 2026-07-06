@@ -11,6 +11,7 @@ import (
 	"tobtoby/trackr/auth"
 	"tobtoby/trackr/config"
 	"tobtoby/trackr/database"
+	_ "tobtoby/trackr/docs"
 	"tobtoby/trackr/firebase"
 	"tobtoby/trackr/handlers"
 	"tobtoby/trackr/logging"
@@ -18,11 +19,19 @@ import (
 	"tobtoby/trackr/validation"
 
 	goValidator "github.com/go-playground/validator/v10"
+	"github.com/gofiber/contrib/v3/swaggo"
 	"github.com/gofiber/fiber/v3"
 	"github.com/gofiber/fiber/v3/middleware/helmet"
 	"github.com/gofiber/fiber/v3/middleware/keyauth"
 	"github.com/gofiber/fiber/v3/middleware/logger"
 )
+
+// @title           Trackr API
+// @version         1.0
+// @description     Location tracking API
+// @securityDefinitions.apikey  ApiKeyAuth
+// @in              header
+// @name            Authorization
 
 //go:embed postgresql/schema/*.sql
 var migrationDir embed.FS
@@ -59,6 +68,7 @@ func main() {
 	v1.Post("/auth/login", handlers.Login)
 	v1.Post("/auth/logout", handlers.Logout)
 
+	app.Get("/docs/*", swaggo.HandlerDefault)
 	app.Get("/health", func(c fiber.Ctx) error { return c.SendStatus(200) })
 
 	go func() {

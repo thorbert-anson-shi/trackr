@@ -4,6 +4,7 @@ package polling
 import (
 	"context"
 	"strconv"
+	"strings"
 	"time"
 
 	"tobtoby/trackr/config"
@@ -17,7 +18,8 @@ import (
 )
 
 func InitializePoller(appCtx context.Context) {
-	isDevEnvironment := config.SafeFetchVar("DEVELOPMENT") == "true"
+	isDevEnvironment := strings.EqualFold(config.SafeFetchVar("DEVELOPMENT"), "true")
+
 	devTickInterval, err := strconv.Atoi(config.SafeFetchVar("TICK_INTERVAL_DEV"))
 	if err != nil {
 		logging.GlobalLogger.Fatalln("TICK_INTERVAL_DEV needs to be an int")
@@ -46,12 +48,12 @@ func InitializePoller(appCtx context.Context) {
 					logging.PollingLogger.Println("Poller stopped by application")
 					return
 				default:
+					jobCtx, cancel := context.WithTimeout(appCtx, 5*time.Second)
+					if err = requestLocationUpdates(jobCtx, generated.New(database.DB)); err != nil {
+						logging.PollingLogger.Printf("An error occurred when requesting locations: %s\n", err.Error())
+					}
+					cancel()
 				}
-				jobCtx, cancel := context.WithTimeout(appCtx, 5*time.Second)
-				if err = requestLocationUpdates(jobCtx, generated.New(database.DB)); err != nil {
-					logging.PollingLogger.Printf("An error occurred when requesting locations: %s\n", err.Error())
-				}
-				cancel()
 			case <-appCtx.Done():
 				logging.PollingLogger.Println("Poller stopped by application")
 				return

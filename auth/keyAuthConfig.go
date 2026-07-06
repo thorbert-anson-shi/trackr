@@ -11,6 +11,7 @@ import (
 
 var publicURLs = []*regexp.Regexp{
 	regexp.MustCompile("^/health$"),
+	regexp.MustCompile("^/docs"),
 }
 
 var KeyAuthConfig keyauth.Config = keyauth.Config{

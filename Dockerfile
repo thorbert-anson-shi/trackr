@@ -1,14 +1,16 @@
-FROM dhi.io/golang:1@sha256:a473fd3819e71b8ec2d81b38014892c937c66b06d94f5a5d49ad393f0cf2e6a2 AS builder
+FROM dhi.io/golang:1.26-alpine3.24-dev@sha256:e48a91483983467f426cae8656aa16be252c6f2e290125e10db01259352a54ca AS builder
 
 WORKDIR /app
 
+ENV GOCACHE=/go-build
+ENV GOMODCACHE=/go-mod-cache
+
 COPY go.mod go.sum ./
-RUN --mount=type=cache,target=/home/tobtoby/go/pkg/mod \ 
-  go mod download
+RUN --mount=type=cache,target=/go-mod-cache go mod download
 
 COPY . .
-RUN --mount=type=cache,target=/home/tobtoby/go/pkg/mod \
-  --mount=type=cache,target=/home/tobtoby/.cache/go-build \
+RUN --mount=type=cache,target=/go-mod-cache \
+  --mount=type=cache,target=/go-build \
   go build -o trackr -ldflags="-s -w" tobtoby/trackr
 
 

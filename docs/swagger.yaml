@@ -1,0 +1,154 @@
+definitions:
+  handlers.CreateUserRequest:
+    properties:
+      name:
+        type: string
+      registration_token:
+        type: string
+    required:
+    - name
+    - registration_token
+    type: object
+  handlers.LocationResponse:
+    properties:
+      accuracy:
+        type: number
+      id:
+        type: integer
+      latitude:
+        type: number
+      longitude:
+        type: number
+      timestamp:
+        type: string
+      user_id:
+        type: integer
+    type: object
+  handlers.PostLocationRequest:
+    properties:
+      accuracy:
+        type: number
+      latitude:
+        type: number
+      longitude:
+        type: number
+    required:
+    - accuracy
+    - latitude
+    - longitude
+    type: object
+info:
+  contact: {}
+  description: Location tracking API
+  title: Trackr API
+  version: "1.0"
+paths:
+  /api/v1/auth/login:
+    post:
+      description: Authenticates the user via API key and logs the login event.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - ApiKeyAuth: []
+      summary: User login
+      tags:
+      - auth
+  /api/v1/auth/logout:
+    post:
+      description: Logs the logout event for the authenticated user.
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+      security:
+      - ApiKeyAuth: []
+      summary: User logout
+      tags:
+      - auth
+  /api/v1/locations:
+    get:
+      description: Retrieves all location records from the database.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/handlers.LocationResponse'
+            type: array
+        "500":
+          description: Internal Server Error
+      security:
+      - ApiKeyAuth: []
+      summary: List all locations
+      tags:
+      - locations
+    post:
+      consumes:
+      - application/json
+      description: Records a new location for the authenticated user.
+      parameters:
+      - description: Location data
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.PostLocationRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/handlers.LocationResponse'
+        "422":
+          description: Unprocessable Entity - invalid request body
+        "500":
+          description: Internal Server Error
+      security:
+      - ApiKeyAuth: []
+      summary: Create a location
+      tags:
+      - locations
+  /api/v1/users:
+    post:
+      consumes:
+      - application/json
+      description: Admin-only endpoint that creates a new user with a randomly generated
+        API key.
+      parameters:
+      - description: User details
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.CreateUserRequest'
+      produces:
+      - text/plain
+      responses:
+        "200":
+          description: Generated API key
+          schema:
+            type: string
+        "403":
+          description: Forbidden - user is not admin
+        "422":
+          description: Unprocessable Entity - invalid request body
+        "500":
+          description: Internal Server Error
+      security:
+      - ApiKeyAuth: []
+      summary: Create a new user
+      tags:
+      - users
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
