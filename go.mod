@@ -5,10 +5,12 @@ go 1.26.1
 require (
 	firebase.google.com/go v3.13.0+incompatible
 	github.com/go-playground/validator/v10 v10.30.2
+	github.com/gofiber/contrib/v3/swaggo v1.0.8
 	github.com/gofiber/fiber/v3 v3.4.0
 	github.com/jackc/pgx/v5 v5.9.2
 	github.com/pressly/goose/v3 v3.27.1
 	github.com/sethvargo/go-diceware v0.5.0
+	github.com/swaggo/swag v1.16.6
 	google.golang.org/api v0.275.0
 )
 
@@ -49,7 +51,6 @@ require (
 	github.com/go-openapi/swag/yamlutils v0.27.0 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
-	github.com/gofiber/contrib/v3/swaggo v1.0.8 // indirect
 	github.com/gofiber/schema v1.8.0 // indirect
 	github.com/gofiber/utils/v2 v2.1.1 // indirect
 	github.com/golang/protobuf v1.5.4 // indirect
@@ -70,7 +71,6 @@ require (
 	github.com/sethvargo/go-retry v0.3.0 // indirect
 	github.com/spiffe/go-spiffe/v2 v2.6.0 // indirect
 	github.com/swaggo/files/v2 v2.0.2 // indirect
-	github.com/swaggo/swag v1.16.6 // indirect
 	github.com/tinylib/msgp v1.6.4 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasthttp v1.72.0 // indirect
