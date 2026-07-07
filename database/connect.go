@@ -8,10 +8,10 @@ import (
 	"tobtoby/trackr/config"
 	"tobtoby/trackr/logging"
 
-	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-func ConnectDB() {
+func ConnectDB(c context.Context) {
 	logging.GlobalLogger.Println("Parsing connection parameters")
 
 	var err error
@@ -32,7 +32,7 @@ func ConnectDB() {
 
 	logging.GlobalLogger.Println("Opening connection to DB...")
 
-	DB, err = pgx.Connect(context.Background(), dsn)
+	DB, err = pgxpool.New(c, dsn)
 	if err != nil {
 		logging.GlobalLogger.Fatalf("Failed to connect to database: %s\n", err.Error())
 	}

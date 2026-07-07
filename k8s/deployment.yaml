@@ -74,12 +74,15 @@ spec:
         - name: app-secrets
           secret:
             secretName: trackr-be-secrets
+        # INFO: Adjust this if you're deploying this on your own
         - name: app-logs
           hostPath:
-            path: /home/tobtoby/playground/trackr/polls.log
+            type: FileOrCreate
+            path: /home/tobtoby/trackr/polls.log
         - name: poll-logs
           hostPath:
-            path: /home/tobtoby/playground/trackr/trackr.log
+            type: FileOrCreate
+            path: /home/tobtoby/trackr/trackr.log
 
       imagePullSecrets:
         - name: tbcr-creds

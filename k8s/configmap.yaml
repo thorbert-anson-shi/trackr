@@ -20,6 +20,7 @@ data:
   TICK_INTERVAL_DEV: "5"
   TICK_INTERVAL_PROD: "300"
   SERVICE_ACCOUNT_PATH: /etc/trackr-be-secrets/service-account-config
+  # INFO: Ensure this is set to false in production
   DEVELOPMENT: "true"
 ---
 apiVersion: v1

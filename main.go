@@ -42,7 +42,7 @@ func main() {
 
 	config.InitializeEnv()
 	logging.InitializeLogger()
-	database.ConnectDB()
+	database.ConnectDB(signalCtx)
 	database.MigrateDB(&migrationDir)
 	firebase.ConnectFirebase()
 	polling.InitializePoller(signalCtx)
