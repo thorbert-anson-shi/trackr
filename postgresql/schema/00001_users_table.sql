@@ -7,7 +7,5 @@ CREATE TABLE users (
 	is_admin bool DEFAULT false
 );
 
-CREATE INDEX idx_api_key ON users (api_key);
-
 -- +goose Down
 DROP TABLE users;
