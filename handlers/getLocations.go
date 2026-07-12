@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"time"
+
 	"tobtoby/trackr/database"
 	"tobtoby/trackr/generated"
 	"tobtoby/trackr/logging"
@@ -9,12 +11,23 @@ import (
 )
 
 type LocationResponse struct {
-	ID        int32   `json:"id"`
-	UserID    int32   `json:"user_id"`
-	Latitude  float32 `json:"latitude"`
-	Longitude float32 `json:"longitude"`
-	Timestamp string  `json:"timestamp"`
-	Accuracy  float32 `json:"accuracy"`
+	ID        int32     `json:"id"`
+	UserID    int32     `json:"userID"`
+	Latitude  float32   `json:"latitude"`
+	Longitude float32   `json:"longitude"`
+	Timestamp time.Time `json:"timestamp"`
+	Accuracy  float32   `json:"accuracy"`
+}
+
+func locationToResponse(l generated.Location) LocationResponse {
+	return LocationResponse{
+		ID:        l.ID,
+		UserID:    l.UserID.Int32,
+		Latitude:  l.Latitude,
+		Longitude: l.Longitude,
+		Timestamp: l.Timestamp.Time,
+		Accuracy:  l.Accuracy.Float32,
+	}
 }
 
 // ListLocationsHandler returns all location records.
@@ -35,5 +48,10 @@ func ListLocationsHandler(c fiber.Ctx) error {
 		return err
 	}
 
-	return c.JSON(locations)
+	response := make([]LocationResponse, len(locations))
+	for i, l := range locations {
+		response[i] = locationToResponse(l)
+	}
+
+	return c.JSON(response)
 }

@@ -36,7 +36,7 @@ func PostLocationHandler(c fiber.Ctx) error {
 
 	if err := c.Bind().Body(locationBuf); err != nil {
 		logging.GlobalLogger.Println("Provided request body is invalid")
-		return c.SendStatus(422)
+		return c.SendStatus(fiber.StatusUnprocessableEntity)
 	}
 
 	// Fetch user extracted by API key validator
@@ -51,8 +51,8 @@ func PostLocationHandler(c fiber.Ctx) error {
 	})
 	if err != nil {
 		logging.GlobalLogger.Printf("An error occurred when posting location: %s\n", err.Error())
-		return c.SendStatus(500)
+		return c.SendStatus(fiber.StatusInternalServerError)
 	}
 
-	return c.Status(201).JSON(location)
+	return c.Status(fiber.StatusCreated).JSON(locationToResponse(location))
 }

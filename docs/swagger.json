@@ -15,9 +15,6 @@
                     }
                 ],
                 "description": "Authenticates the user via API key and logs the login event.",
-                "produces": [
-                    "application/json"
-                ],
                 "tags": [
                     "auth"
                 ],
@@ -25,6 +22,9 @@
                 "responses": {
                     "200": {
                         "description": "OK"
+                    },
+                    "401": {
+                        "description": "Unauthorized - invalid or missing API key"
                     }
                 }
             }
@@ -37,9 +37,6 @@
                     }
                 ],
                 "description": "Logs the logout event for the authenticated user.",
-                "produces": [
-                    "application/json"
-                ],
                 "tags": [
                     "auth"
                 ],
@@ -47,6 +44,40 @@
                 "responses": {
                     "204": {
                         "description": "No Content"
+                    },
+                    "401": {
+                        "description": "Unauthorized - invalid or missing API key"
+                    }
+                }
+            }
+        },
+        "/api/v1/invite": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Admin-only endpoint that creates a new invite link with a randomly generated code, valid for 5 minutes.",
+                "produces": [
+                    "text/plain"
+                ],
+                "tags": [
+                    "invites"
+                ],
+                "summary": "Create an invite link",
+                "responses": {
+                    "201": {
+                        "description": "Full invite URL",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - only admins can create invite links"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
                     }
                 }
             }
@@ -127,12 +158,7 @@
         },
         "/api/v1/users": {
             "post": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "description": "Admin-only endpoint that creates a new user with a randomly generated API key.",
+                "description": "Guest-only endpoint that creates a new user when provided a valid invite code.",
                 "consumes": [
                     "application/json"
                 ],
@@ -155,14 +181,17 @@
                     }
                 ],
                 "responses": {
-                    "200": {
+                    "201": {
                         "description": "Generated API key",
                         "schema": {
                             "type": "string"
                         }
                     },
+                    "400": {
+                        "description": "Bad Request"
+                    },
                     "403": {
-                        "description": "Forbidden - user is not admin"
+                        "description": "Forbidden - the invite link has been used"
                     },
                     "422": {
                         "description": "Unprocessable Entity - invalid request body"
@@ -178,14 +207,18 @@
         "handlers.CreateUserRequest": {
             "type": "object",
             "required": [
+                "inviteCode",
                 "name",
-                "registration_token"
+                "registrationToken"
             ],
             "properties": {
+                "inviteCode": {
+                    "type": "string"
+                },
                 "name": {
                     "type": "string"
                 },
-                "registration_token": {
+                "registrationToken": {
                     "type": "string"
                 }
             }
@@ -208,7 +241,7 @@
                 "timestamp": {
                     "type": "string"
                 },
-                "user_id": {
+                "userID": {
                     "type": "integer"
                 }
             }

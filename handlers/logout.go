@@ -12,9 +12,9 @@ import (
 // @Summary      User logout
 // @Description  Logs the logout event for the authenticated user.
 // @Tags         auth
-// @Produce      json
 // @Security     ApiKeyAuth
 // @Success      204
+// @Failure      401  "Unauthorized - invalid or missing API key"
 // @Router       /api/v1/auth/logout [post]
 func Logout(c fiber.Ctx) error {
 	// API key validation middleware handles user authentication

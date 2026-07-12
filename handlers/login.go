@@ -12,9 +12,9 @@ import (
 // @Summary      User login
 // @Description  Authenticates the user via API key and logs the login event.
 // @Tags         auth
-// @Produce      json
 // @Security     ApiKeyAuth
 // @Success      200
+// @Failure      401  "Unauthorized - invalid or missing API key"
 // @Router       /api/v1/auth/login [post]
 func Login(c fiber.Ctx) error {
 	// It's funny but the apiKeyValidator already

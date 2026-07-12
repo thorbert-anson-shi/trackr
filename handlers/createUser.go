@@ -19,8 +19,8 @@ import (
 
 type CreateUserRequest struct {
 	Name              string `json:"name" validate:"required"`
-	RegistrationToken string `json:"registration_token" validate:"required"`
-	InviteCode        string `json:"invite_code" validate:"required"`
+	RegistrationToken string `json:"registrationToken" validate:"required"`
+	InviteCode        string `json:"inviteCode" validate:"required"`
 }
 
 // CreateUser creates a new user with a randomly generated API key.
@@ -30,7 +30,7 @@ type CreateUserRequest struct {
 // @Accept       json
 // @Produce      plain
 // @Param        body  body  CreateUserRequest  true  "User details"
-// @Success      200   {string}  string  "Generated API key"
+// @Success      201   {string}  string  "Generated API key"
 // @Failure      400   "Bad Request"
 // @Failure      403   "Forbidden - the invite link has expired"
 // @Failure      403   "Forbidden - the invite link has been used"

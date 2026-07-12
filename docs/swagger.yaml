@@ -1,13 +1,16 @@
 definitions:
   handlers.CreateUserRequest:
     properties:
+      inviteCode:
+        type: string
       name:
         type: string
-      registration_token:
+      registrationToken:
         type: string
     required:
+    - inviteCode
     - name
-    - registration_token
+    - registrationToken
     type: object
   handlers.LocationResponse:
     properties:
@@ -21,7 +24,7 @@ definitions:
         type: number
       timestamp:
         type: string
-      user_id:
+      userID:
         type: integer
     type: object
   handlers.PostLocationRequest:
@@ -46,11 +49,11 @@ paths:
   /api/v1/auth/login:
     post:
       description: Authenticates the user via API key and logs the login event.
-      produces:
-      - application/json
       responses:
         "200":
           description: OK
+        "401":
+          description: Unauthorized - invalid or missing API key
       security:
       - ApiKeyAuth: []
       summary: User login
@@ -59,16 +62,36 @@ paths:
   /api/v1/auth/logout:
     post:
       description: Logs the logout event for the authenticated user.
-      produces:
-      - application/json
       responses:
         "204":
           description: No Content
+        "401":
+          description: Unauthorized - invalid or missing API key
       security:
       - ApiKeyAuth: []
       summary: User logout
       tags:
       - auth
+  /api/v1/invite:
+    post:
+      description: Admin-only endpoint that creates a new invite link with a randomly
+        generated code, valid for 5 minutes.
+      produces:
+      - text/plain
+      responses:
+        "201":
+          description: Full invite URL
+          schema:
+            type: string
+        "403":
+          description: Forbidden - only admins can create invite links
+        "500":
+          description: Internal Server Error
+      security:
+      - ApiKeyAuth: []
+      summary: Create an invite link
+      tags:
+      - invites
   /api/v1/locations:
     get:
       description: Retrieves all location records from the database.
@@ -119,8 +142,8 @@ paths:
     post:
       consumes:
       - application/json
-      description: Admin-only endpoint that creates a new user with a randomly generated
-        API key.
+      description: Guest-only endpoint that creates a new user when provided a valid
+        invite code.
       parameters:
       - description: User details
         in: body
@@ -131,18 +154,18 @@ paths:
       produces:
       - text/plain
       responses:
-        "200":
+        "201":
           description: Generated API key
           schema:
             type: string
+        "400":
+          description: Bad Request
         "403":
-          description: Forbidden - user is not admin
+          description: Forbidden - the invite link has been used
         "422":
           description: Unprocessable Entity - invalid request body
         "500":
           description: Internal Server Error
-      security:
-      - ApiKeyAuth: []
       summary: Create a new user
       tags:
       - users

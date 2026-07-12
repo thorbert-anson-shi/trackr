@@ -14,6 +14,16 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+// CreateInviteLink generates a new invite link with a 5-minute expiry.
+// @Summary      Create an invite link
+// @Description  Admin-only endpoint that creates a new invite link with a randomly generated code, valid for 5 minutes.
+// @Tags         invites
+// @Produce      plain
+// @Security     ApiKeyAuth
+// @Success      201  {string}  string  "Full invite URL"
+// @Failure      403  "Forbidden - only admins can create invite links"
+// @Failure      500  "Internal Server Error"
+// @Router       /api/v1/invite [post]
 func CreateInviteLink(c fiber.Ctx) error {
 	queries := generated.New(database.DB)
 	user := c.Locals(auth.UserContextKey).(generated.User)
