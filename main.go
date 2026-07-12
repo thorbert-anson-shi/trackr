@@ -37,7 +37,7 @@ import (
 var migrationDir embed.FS
 
 func main() {
-	signalCtx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+	signalCtx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM, syscall.SIGKILL)
 	defer stop()
 
 	config.InitializeEnv()
@@ -67,6 +67,7 @@ func main() {
 	v1.Post("/users", handlers.CreateUser)
 	v1.Post("/auth/login", handlers.Login)
 	v1.Post("/auth/logout", handlers.Logout)
+	v1.Post("/invite", handlers.CreateInviteLink)
 
 	app.Get("/docs/*", swaggo.HandlerDefault)
 	app.Get("/health", func(c fiber.Ctx) error { return c.SendStatus(200) })

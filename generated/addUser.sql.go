@@ -13,14 +13,15 @@ import (
 
 const addUser = `-- name: AddUser :one
 INSERT INTO users (name, registration_token, api_key, is_admin) 
-VALUES ($1, $2, $3, $4) RETURNING id, name, registration_token, api_key, is_admin
+VALUES ($1, $2, $3, $4) 
+RETURNING id, name, registration_token, api_key, is_admin
 `
 
 type AddUserParams struct {
-	Name              pgtype.Text
+	Name              string
 	RegistrationToken pgtype.Text
-	ApiKey            pgtype.Text
-	IsAdmin           pgtype.Bool
+	ApiKey            string
+	IsAdmin           bool
 }
 
 func (q *Queries) AddUser(ctx context.Context, arg AddUserParams) (User, error) {

@@ -8,19 +8,26 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+type Invitation struct {
+	ID         int32
+	IsUsed     bool
+	Code       string
+	ExpiryDate pgtype.Timestamp
+}
+
 type Location struct {
 	ID        int32
 	UserID    pgtype.Int4
-	Latitude  pgtype.Float4
-	Longitude pgtype.Float4
+	Latitude  float32
+	Longitude float32
 	Timestamp pgtype.Timestamp
 	Accuracy  pgtype.Float4
 }
 
 type User struct {
 	ID                int32
-	Name              pgtype.Text
+	Name              string
 	RegistrationToken pgtype.Text
-	ApiKey            pgtype.Text
-	IsAdmin           pgtype.Bool
+	ApiKey            string
+	IsAdmin           bool
 }

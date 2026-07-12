@@ -7,15 +7,13 @@ package generated
 
 import (
 	"context"
-
-	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const getUserByApiKey = `-- name: GetUserByApiKey :one
 SELECT id, name, registration_token, api_key, is_admin FROM users WHERE users.api_key = $1
 `
 
-func (q *Queries) GetUserByApiKey(ctx context.Context, apiKey pgtype.Text) (User, error) {
+func (q *Queries) GetUserByApiKey(ctx context.Context, apiKey string) (User, error) {
 	row := q.db.QueryRow(ctx, getUserByApiKey, apiKey)
 	var i User
 	err := row.Scan(

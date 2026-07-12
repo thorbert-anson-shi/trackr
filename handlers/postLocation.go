@@ -44,8 +44,8 @@ func PostLocationHandler(c fiber.Ctx) error {
 
 	location, err := queries.AddLocation(c, generated.AddLocationParams{
 		UserID:    pgtype.Int4{Int32: user.ID, Valid: true},
-		Latitude:  pgtype.Float4{Float32: locationBuf.Latitude, Valid: true},
-		Longitude: pgtype.Float4{Float32: locationBuf.Longitude, Valid: true},
+		Latitude:  locationBuf.Latitude,
+		Longitude: locationBuf.Longitude,
 		Timestamp: pgtype.Timestamp{Time: time.Now().UTC(), Valid: true},
 		Accuracy:  pgtype.Float4{Float32: locationBuf.Accuracy, Valid: true},
 	})
@@ -54,5 +54,5 @@ func PostLocationHandler(c fiber.Ctx) error {
 		return c.SendStatus(500)
 	}
 
-	return c.JSON(location)
+	return c.Status(201).JSON(location)
 }

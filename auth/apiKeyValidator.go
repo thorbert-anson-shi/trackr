@@ -8,7 +8,6 @@ import (
 
 	"github.com/gofiber/fiber/v3"
 	"github.com/gofiber/fiber/v3/middleware/keyauth"
-	"github.com/jackc/pgx/v5/pgtype"
 )
 
 var UserContextKey struct{}
@@ -18,7 +17,7 @@ func APIKeyValidator(c fiber.Ctx, key string) (bool, error) {
 
 	hashedKey := hashing.HashSHA256(key)
 
-	user, err := queries.GetUserByApiKey(c, pgtype.Text{String: hashedKey, Valid: true})
+	user, err := queries.GetUserByApiKey(c, hashedKey)
 	if err != nil {
 		logging.GlobalLogger.Println("The provided API key is invalid")
 		return false, keyauth.ErrMissingOrMalformedAPIKey
