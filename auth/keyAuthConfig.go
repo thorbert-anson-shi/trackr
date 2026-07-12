@@ -12,6 +12,8 @@ import (
 var publicURLs = []*regexp.Regexp{
 	regexp.MustCompile("^/health$"),
 	regexp.MustCompile("^/docs"),
+	// INFO: This is needed to allow new user creation via invite link
+	regexp.MustCompile("^/api/v1/users$"),
 }
 
 var KeyAuthConfig keyauth.Config = keyauth.Config{

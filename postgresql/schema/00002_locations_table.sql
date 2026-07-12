@@ -2,9 +2,9 @@
 CREATE TABLE locations (
 	id serial PRIMARY KEY,
 	user_id integer REFERENCES users(id) ON DELETE CASCADE,
-	latitude real,
-	longitude real,
-	timestamp timestamp,
+	latitude real NOT NULL,
+	longitude real NOT NULL,
+	timestamp timestamp NOT NULL,
 	accuracy real
 );
 

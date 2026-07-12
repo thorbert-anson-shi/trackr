@@ -19,6 +19,6 @@ import (
 func Logout(c fiber.Ctx) error {
 	// API key validation middleware handles user authentication
 	user := c.Locals(auth.UserContextKey).(generated.User)
-	logging.GlobalLogger.Printf("User %s has logged out", user.Name.String)
+	logging.GlobalLogger.Printf("User %s has logged out", user.Name)
 	return c.SendStatus(fiber.StatusNoContent)
 }

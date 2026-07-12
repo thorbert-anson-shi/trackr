@@ -25,8 +25,8 @@ INSERT INTO locations (
 
 type AddLocationParams struct {
 	UserID    pgtype.Int4
-	Latitude  pgtype.Float4
-	Longitude pgtype.Float4
+	Latitude  float32
+	Longitude float32
 	Timestamp pgtype.Timestamp
 	Accuracy  pgtype.Float4
 }

@@ -3,6 +3,7 @@ package admin
 
 import (
 	"context"
+	"errors"
 
 	"tobtoby/trackr/config"
 	"tobtoby/trackr/database"
@@ -10,6 +11,7 @@ import (
 	"tobtoby/trackr/hashing"
 	"tobtoby/trackr/logging"
 
+	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
@@ -22,13 +24,23 @@ func BootstrapAdmin(c context.Context) {
 	hashedAPIKey := hashing.HashSHA256(adminAPIKey)
 
 	_, err := queries.AddUser(c, generated.AddUserParams{
-		Name:              pgtype.Text{String: adminName, Valid: true},
-		ApiKey:            pgtype.Text{String: hashedAPIKey, Valid: true},
+		Name:              adminName,
+		ApiKey:            hashedAPIKey,
 		RegistrationToken: pgtype.Text{},
-		IsAdmin:           pgtype.Bool{Bool: true, Valid: true},
+		IsAdmin:           true,
 	})
 	if err != nil {
-		logging.GlobalLogger.Fatalf("Failed to generate admin user: %s\n", err.Error())
+		if pgErr, ok := errors.AsType[*pgconn.PgError](err); ok {
+			switch pgErr.Code {
+			case "23505":
+				logging.GlobalLogger.Println("Admin user already exists. Skipping admin bootstrapping")
+				return
+			default:
+				logging.GlobalLogger.Fatalf("Failed to generate admin user: %s; PostgreSQL error code: %s\n", pgErr.Message, pgErr.Code)
+			}
+		}
+
+		logging.GlobalLogger.Fatalf("An unexpected error occurred: %s\n", err.Error())
 	}
 
 	logging.GlobalLogger.Println("Successfully bootstrapped admin user")
