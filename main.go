@@ -28,7 +28,7 @@ import (
 )
 
 // @title           Trackr API
-// @version         1.0
+// @version         0.2.0
 // @description     Location tracking API
 // @securityDefinitions.apikey  ApiKeyAuth
 // @in              header
