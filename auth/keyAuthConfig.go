@@ -10,6 +10,7 @@ import (
 )
 
 var publicURLs = []*regexp.Regexp{
+	regexp.MustCompile("^/.well-known"),
 	regexp.MustCompile("^/health$"),
 	regexp.MustCompile("^/docs"),
 	// INFO: This is needed to allow new user creation via invite link

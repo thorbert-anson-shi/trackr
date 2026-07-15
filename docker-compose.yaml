@@ -2,7 +2,7 @@ name: trackr
 
 services:
   server:
-    image: tbcr.tobtoby.net/trackr:0.1.5
+    image: tbcr.tobtoby.net/trackr:0.1.6
     ports:
       - "8000:8000"
     volumes:

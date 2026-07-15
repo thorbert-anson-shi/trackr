@@ -24,6 +24,7 @@ import (
 	"github.com/gofiber/fiber/v3/middleware/helmet"
 	"github.com/gofiber/fiber/v3/middleware/keyauth"
 	"github.com/gofiber/fiber/v3/middleware/logger"
+	"github.com/gofiber/fiber/v3/middleware/static"
 )
 
 // @title           Trackr API
@@ -59,6 +60,11 @@ func main() {
 	app.Use(helmet.New())
 	app.Use(keyauth.New(auth.KeyAuthConfig))
 
+	// INFO: /.well-known/assetlinks.json is needed to implement App Links (https://developer.android.com/training/app-links/configure-assetlinks)
+	app.Get("/.well-known/*", static.New("./.well-known"))
+	app.Get("/docs/*", swaggo.HandlerDefault)
+	app.Get("/health", func(c fiber.Ctx) error { return c.SendStatus(200) })
+
 	api := app.Group("/api")
 
 	v1 := api.Group("/v1")
@@ -68,9 +74,6 @@ func main() {
 	v1.Post("/auth/login", handlers.Login)
 	v1.Post("/auth/logout", handlers.Logout)
 	v1.Post("/invite", handlers.CreateInviteLink)
-
-	app.Get("/docs/*", swaggo.HandlerDefault)
-	app.Get("/health", func(c fiber.Ctx) error { return c.SendStatus(200) })
 
 	go func() {
 		if err := app.Listen(":8000"); err != nil {
