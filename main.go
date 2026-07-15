@@ -71,6 +71,7 @@ func main() {
 	v1.Get("/locations", handlers.ListLocationsHandler)
 	v1.Post("/locations", handlers.PostLocationHandler)
 	v1.Post("/users", handlers.CreateUser)
+	v1.Get("/users/locations/latest", handlers.ListLatestLocationsHandler)
 	v1.Post("/auth/login", handlers.Login)
 	v1.Post("/auth/logout", handlers.Logout)
 	v1.Post("/invite", handlers.CreateInviteLink)

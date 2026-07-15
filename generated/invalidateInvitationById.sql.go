@@ -11,8 +11,8 @@ import (
 
 const invalidateInvitationById = `-- name: InvalidateInvitationById :exec
 UPDATE invitations
-SET invitations.is_used = true
-WHERE invitations.id = $1
+SET is_used = true
+WHERE id = $1
 `
 
 func (q *Queries) InvalidateInvitationById(ctx context.Context, id int32) error {

@@ -169,6 +169,25 @@ paths:
       summary: Create a new user
       tags:
       - users
+  /api/v1/users/locations/latest:
+    get:
+      description: Retrieves all latest location records from the database.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/handlers.LocationResponse'
+            type: array
+        "500":
+          description: Internal Server Error
+      security:
+      - ApiKeyAuth: []
+      summary: List every member's latest locations
+      tags:
+      - locations
 securityDefinitions:
   ApiKeyAuth:
     in: header

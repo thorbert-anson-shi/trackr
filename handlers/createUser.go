@@ -102,6 +102,8 @@ func CreateUser(c fiber.Ctx) error {
 		return c.SendStatus(fiber.StatusInternalServerError)
 	}
 
+	logging.GlobalLogger.Printf("Invitation ID: %d\n", invitation.ID)
+
 	err = qtx.InvalidateInvitationById(c, invitation.ID)
 	if err != nil {
 		logging.GlobalLogger.Println("Failed to invalidate invitation. User creation will be cancelled")
