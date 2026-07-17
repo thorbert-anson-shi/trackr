@@ -2,7 +2,7 @@
 CREATE TABLE users (
 	id serial PRIMARY KEY,
 	name varchar(50) NOT NULL,
-	registration_token varchar,
+	firebase_id varchar NOT NULL,
 	api_key varchar NOT NULL,
 	is_admin bool DEFAULT false NOT NULL
 );

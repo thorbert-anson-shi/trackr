@@ -10,7 +10,7 @@ import (
 )
 
 const getUserByApiKey = `-- name: GetUserByApiKey :one
-SELECT id, name, registration_token, api_key, is_admin FROM users WHERE users.api_key = $1
+SELECT id, name, firebase_id, api_key, is_admin FROM users WHERE users.api_key = $1
 `
 
 func (q *Queries) GetUserByApiKey(ctx context.Context, apiKey string) (User, error) {
@@ -19,7 +19,7 @@ func (q *Queries) GetUserByApiKey(ctx context.Context, apiKey string) (User, err
 	err := row.Scan(
 		&i.ID,
 		&i.Name,
-		&i.RegistrationToken,
+		&i.FirebaseID,
 		&i.ApiKey,
 		&i.IsAdmin,
 	)

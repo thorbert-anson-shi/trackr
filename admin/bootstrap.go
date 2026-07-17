@@ -12,7 +12,6 @@ import (
 	"tobtoby/trackr/logging"
 
 	"github.com/jackc/pgx/v5/pgconn"
-	"github.com/jackc/pgx/v5/pgtype"
 )
 
 func BootstrapAdmin(c context.Context) {
@@ -24,10 +23,10 @@ func BootstrapAdmin(c context.Context) {
 	hashedAPIKey := hashing.HashSHA256(adminAPIKey)
 
 	_, err := queries.AddUser(c, generated.AddUserParams{
-		Name:              adminName,
-		ApiKey:            hashedAPIKey,
-		RegistrationToken: pgtype.Text{},
-		IsAdmin:           true,
+		Name:       adminName,
+		ApiKey:     hashedAPIKey,
+		FirebaseID: "dummy-firebase-id",
+		IsAdmin:    true,
 	})
 	if err != nil {
 		if pgErr, ok := errors.AsType[*pgconn.PgError](err); ok {

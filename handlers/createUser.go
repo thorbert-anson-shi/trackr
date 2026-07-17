@@ -13,7 +13,6 @@ import (
 	"github.com/gofiber/fiber/v3"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
-	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/sethvargo/go-diceware/diceware"
 )
 
@@ -86,10 +85,10 @@ func CreateUser(c fiber.Ctx) error {
 	qtx := queries.WithTx(tx)
 
 	_, err = qtx.AddUser(c.Context(), generated.AddUserParams{
-		Name:              userBuf.Name,
-		ApiKey:            apiKeyHash,
-		RegistrationToken: pgtype.Text{String: userBuf.RegistrationToken, Valid: true},
-		IsAdmin:           false,
+		Name:       userBuf.Name,
+		ApiKey:     apiKeyHash,
+		FirebaseID: userBuf.RegistrationToken,
+		IsAdmin:    false,
 	})
 	if err != nil {
 		if pgErr, ok := errors.AsType[*pgconn.PgError](err); ok {

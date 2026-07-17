@@ -7,29 +7,27 @@ package generated
 
 import (
 	"context"
-
-	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const updateUser = `-- name: UpdateUser :one
 UPDATE users 
-SET registration_token = $2 
+SET firebase_id = $2 
 WHERE id = $1 
-RETURNING id, name, registration_token, api_key, is_admin
+RETURNING id, name, firebase_id, api_key, is_admin
 `
 
 type UpdateUserParams struct {
-	ID                int32
-	RegistrationToken pgtype.Text
+	ID         int32
+	FirebaseID string
 }
 
 func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (User, error) {
-	row := q.db.QueryRow(ctx, updateUser, arg.ID, arg.RegistrationToken)
+	row := q.db.QueryRow(ctx, updateUser, arg.ID, arg.FirebaseID)
 	var i User
 	err := row.Scan(
 		&i.ID,
 		&i.Name,
-		&i.RegistrationToken,
+		&i.FirebaseID,
 		&i.ApiKey,
 		&i.IsAdmin,
 	)

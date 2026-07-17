@@ -13,8 +13,7 @@ import (
 	"tobtoby/trackr/generated"
 	"tobtoby/trackr/logging"
 
-	"firebase.google.com/go/messaging"
-	"github.com/jackc/pgx/v5/pgtype"
+	"firebase.google.com/go/v4/messaging"
 )
 
 func InitializePoller(appCtx context.Context) {
@@ -63,26 +62,22 @@ func InitializePoller(appCtx context.Context) {
 }
 
 func requestLocationUpdates(c context.Context, queries *generated.Queries) error {
-	registrationTokens, err := queries.ListRegistrationTokens(c)
+	firebaseIds, err := queries.ListFirebaseIDs(c)
 	if err != nil {
 		logging.PollingLogger.Println("An error occurred when fetching registration tokens")
 		return err
 	}
 
-	nativeRegistrationTokens := registrationTokenPGToNative(registrationTokens)
-
 	// If no valid registration tokens found, don't poll
-	// NOTE: This check is done after parsing because admin returns a NULL registration token,
-	// causing the len(registrationTokens) == 0 check to fail
-	if len(nativeRegistrationTokens) == 0 {
+	if len(firebaseIds) == 0 {
 		return nil
 	}
 
-	logging.PollingLogger.Printf("Registration tokens: %s\n", nativeRegistrationTokens)
+	logging.PollingLogger.Printf("Installation IDs: %s\n", firebaseIds)
 
-	batchResponse, err := firebase.MsgClient.SendMulticast(c, &messaging.MulticastMessage{
-		Tokens: nativeRegistrationTokens,
-		Data:   map[string]string{"event": "sendLocation"},
+	batchResponse, err := firebase.MsgClient.SendEachForMulticast(c, &messaging.MulticastMessage{
+		Fids: firebaseIds,
+		Data: map[string]string{"event": "sendLocation"},
 	})
 	if err != nil {
 		logging.PollingLogger.Printf("Failed to send all messages: %s\n", err.Error())
@@ -90,27 +85,15 @@ func requestLocationUpdates(c context.Context, queries *generated.Queries) error
 	}
 
 	if batchResponse.FailureCount > 0 {
-		var failedTokens []string
+		var failedIDs []string
 		for idx, resp := range batchResponse.Responses {
 			if !resp.Success {
-				failedTokens = append(failedTokens, nativeRegistrationTokens[idx])
+				failedIDs = append(failedIDs, firebaseIds[idx])
 			}
 		}
 
-		logging.PollingLogger.Printf("Tokens causing failure: %v\n", failedTokens)
+		logging.PollingLogger.Printf("Installation IDs causing failure: %v\n", failedIDs)
 	}
 
 	return nil
-}
-
-func registrationTokenPGToNative(arr []pgtype.Text) []string {
-	var res []string
-	for _, token := range arr {
-		// check if token string in DB is not NULL
-		if token.Valid {
-			res = append(res, token.String)
-		}
-	}
-
-	return res
 }

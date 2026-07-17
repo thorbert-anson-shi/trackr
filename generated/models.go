@@ -25,9 +25,9 @@ type Location struct {
 }
 
 type User struct {
-	ID                int32
-	Name              string
-	RegistrationToken pgtype.Text
-	ApiKey            string
-	IsAdmin           bool
+	ID         int32
+	Name       string
+	FirebaseID string
+	ApiKey     string
+	IsAdmin    bool
 }

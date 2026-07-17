@@ -7,27 +7,25 @@ package generated
 
 import (
 	"context"
-
-	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const addUser = `-- name: AddUser :one
-INSERT INTO users (name, registration_token, api_key, is_admin) 
+INSERT INTO users (name, firebase_id, api_key, is_admin) 
 VALUES ($1, $2, $3, $4) 
-RETURNING id, name, registration_token, api_key, is_admin
+RETURNING id, name, firebase_id, api_key, is_admin
 `
 
 type AddUserParams struct {
-	Name              string
-	RegistrationToken pgtype.Text
-	ApiKey            string
-	IsAdmin           bool
+	Name       string
+	FirebaseID string
+	ApiKey     string
+	IsAdmin    bool
 }
 
 func (q *Queries) AddUser(ctx context.Context, arg AddUserParams) (User, error) {
 	row := q.db.QueryRow(ctx, addUser,
 		arg.Name,
-		arg.RegistrationToken,
+		arg.FirebaseID,
 		arg.ApiKey,
 		arg.IsAdmin,
 	)
@@ -35,7 +33,7 @@ func (q *Queries) AddUser(ctx context.Context, arg AddUserParams) (User, error) 
 	err := row.Scan(
 		&i.ID,
 		&i.Name,
-		&i.RegistrationToken,
+		&i.FirebaseID,
 		&i.ApiKey,
 		&i.IsAdmin,
 	)

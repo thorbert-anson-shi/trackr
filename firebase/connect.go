@@ -7,8 +7,7 @@ import (
 	"tobtoby/trackr/config"
 	"tobtoby/trackr/logging"
 
-	fb "firebase.google.com/go"
-
+	firebase "firebase.google.com/go/v4"
 	"google.golang.org/api/option"
 )
 
@@ -18,7 +17,7 @@ func ConnectFirebase() {
 	var err error
 	opt := option.WithAuthCredentialsFile(option.ServiceAccount, config.SafeFetchVar("SERVICE_ACCOUNT_PATH"))
 
-	app, err := fb.NewApp(context.Background(), nil, opt)
+	app, err := firebase.NewApp(context.Background(), nil, opt)
 	if err != nil {
 		logging.GlobalLogger.Fatalln(fmt.Errorf("error initializing app: %v", err))
 	}
