@@ -29,7 +29,7 @@ spec:
       # - Each init container must complete successfully before the next one starts.
       containers:
         - name: trackr
-          image: tbcr.tobtoby.net/trackr:0.2.0
+          image: tbcr.tobtoby.net/trackr:0.2.1
           imagePullPolicy: IfNotPresent
           resources:
             requests:
