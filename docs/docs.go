@@ -246,18 +246,18 @@ const docTemplate = `{
         "handlers.CreateUserRequest": {
             "type": "object",
             "required": [
+                "firebaseID",
                 "inviteCode",
-                "name",
-                "registrationToken"
+                "name"
             ],
             "properties": {
+                "firebaseID": {
+                    "type": "string"
+                },
                 "inviteCode": {
                     "type": "string"
                 },
                 "name": {
-                    "type": "string"
-                },
-                "registrationToken": {
                     "type": "string"
                 }
             }

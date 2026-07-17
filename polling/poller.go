@@ -64,11 +64,11 @@ func InitializePoller(appCtx context.Context) {
 func requestLocationUpdates(c context.Context, queries *generated.Queries) error {
 	firebaseIds, err := queries.ListFirebaseIDs(c)
 	if err != nil {
-		logging.PollingLogger.Println("An error occurred when fetching registration tokens")
+		logging.PollingLogger.Println("An error occurred when fetching Firebase IDs")
 		return err
 	}
 
-	// If no valid registration tokens found, don't poll
+	// If no valid Firebase IDs found, don't poll
 	if len(firebaseIds) == 0 {
 		return nil
 	}

@@ -1,16 +1,16 @@
 definitions:
   handlers.CreateUserRequest:
     properties:
+      firebaseID:
+        type: string
       inviteCode:
         type: string
       name:
         type: string
-      registrationToken:
-        type: string
     required:
+    - firebaseID
     - inviteCode
     - name
-    - registrationToken
     type: object
   handlers.LocationResponse:
     properties:

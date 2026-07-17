@@ -17,9 +17,9 @@ import (
 )
 
 type CreateUserRequest struct {
-	Name              string `json:"name" validate:"required"`
-	RegistrationToken string `json:"registrationToken" validate:"required"`
-	InviteCode        string `json:"inviteCode" validate:"required"`
+	Name       string `json:"name" validate:"required"`
+	FirebaseID string `json:"firebaseID" validate:"required"`
+	InviteCode string `json:"inviteCode" validate:"required"`
 }
 
 // CreateUser creates a new user with a randomly generated API key.
@@ -87,7 +87,7 @@ func CreateUser(c fiber.Ctx) error {
 	_, err = qtx.AddUser(c.Context(), generated.AddUserParams{
 		Name:       userBuf.Name,
 		ApiKey:     apiKeyHash,
-		FirebaseID: userBuf.RegistrationToken,
+		FirebaseID: userBuf.FirebaseID,
 		IsAdmin:    false,
 	})
 	if err != nil {
