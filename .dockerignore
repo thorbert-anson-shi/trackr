@@ -7,3 +7,5 @@ postgres.pass
 service-account-config.json
 docker-compose.yaml
 trackr
+Dockerfile
+build-and-push.sh

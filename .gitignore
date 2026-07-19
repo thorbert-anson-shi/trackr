@@ -13,3 +13,6 @@ k8s/secrets.yaml
 
 # android
 .well-known/*
+
+# scripts and such
+build-and-push.sh

@@ -88,6 +88,7 @@ func requestLocationUpdates(c context.Context, queries *generated.Queries) error
 		var failedIDs []string
 		for idx, resp := range batchResponse.Responses {
 			if !resp.Success {
+				logging.PollingLogger.Printf("Failed to send message to client: %s", resp.Error.Error())
 				failedIDs = append(failedIDs, firebaseIds[idx])
 			}
 		}
